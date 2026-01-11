@@ -410,8 +410,8 @@ class CargoConfigBase(sublime_plugin.WindowCommand):
         # https://static.rust-lang.org/dist/index.html
         # (See https://github.com/rust-lang-nursery/rustup.rs/issues/215)
         shorthands = []
-        channels = ['nightly', 'beta', 'stable', '\d\.\d{1,2}\.\d']
-        pattern = '(%s)(?:-(\d{4}-\d{2}-\d{2}))?(?:-(.*))' % '|'.join(channels)
+        channels = ['nightly', 'beta', 'stable', r'\d\.\d{1,2}\.\d']
+        pattern = r'(%s)(?:-(\d{4}-\d{2}-\d{2}))?(?:-(.*))' % '|'.join(channels)
         for toolchain in output:
             m = re.match(pattern, toolchain)
             # Should always match.
