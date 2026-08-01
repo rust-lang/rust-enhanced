@@ -82,7 +82,7 @@
     [
         {
             "characters": ".:",
-            "selector": "source.rust"
+            "selector": "source.rust - comment"
         }
     ]
 }
