@@ -26,6 +26,7 @@ pub fn macro_tests() {
 //  ^^^^^^^ support.macro
     println !("✓ broken over space em quad, not a Rust whitespace char"); //
 //         ^  - support.macro
+//         ^    invalid.illegal.rust
     println!("Example");
 //  ^^^^^^^^ support.macro
 //          ^ punctuation.section.group.begin
