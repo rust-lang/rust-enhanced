@@ -5,7 +5,10 @@ name: Rust Enhanced
 file_extensions:
   - rs
 scope: source.rust
-variables:
+variables:  # ⊎=set safe  ∪=set safe with exception
+  wsp: '[\x{9}\x{a}\x{b}\x{c}\x{d}\x{20}\x{85}\x{200e}\x{200f}\x{2028}\x{2029}]' #⊎  doc.rust-lang.org/nightly/reference/whitespace.html
+  #      \t⭾␉ \n ␊ \v⭿␋ \f ␌ \r ␍    ␠     NEL  ↱LRM    ↰RLM    ━Sep    §Sep
+  #sp_u: '[\x{20}\x{a0}\x{1680}\x{2000}\x{2001}\x{2002}\x{2003}\x{2004}\x{2005}\x{2006}\x{2007}\x{2008}\x{2009}\x{200a}\x{202f}\x{205f}\x{3000}]' #⊎  compart.com/en/unicode/category/zs
   non_raw_ident: '[[:alpha:]][_[:alnum:]]*|_[_[:alnum:]]+'
   # include a word boundary at the end to ensure all possible characters are
   # consumed, to prevent catastrophic backtracking
@@ -22,6 +25,7 @@ contexts:
     - include: statements
 
   prototype:
+    # - include: wss # bugs some tests
     # Macro metavariables. Ideally we would do this as a with_prototype,
     # however then we run into infinite recursion. It needs to be a prototype
     # since macro_rules! allows constructing new code, thus the metavariables
@@ -32,6 +36,7 @@ contexts:
   statements:
     # This isn't really just "statements", it also includes all types,
     # expressions, items, etc.
+    - include: wss
 
     - include: visibility
 
@@ -1624,3 +1629,12 @@ contexts:
 
     - match: \b(super|self|Self)\b
       scope: keyword.other.rust
+
+
+  ws:                     # whitespace
+    - match               : '{{wsp}}'
+      #scope               : dbg✗w␠
+      pop                 : 1
+  wss:
+    - match               : '{{wsp}}'
+      #scope               : dbg✗w␠s
