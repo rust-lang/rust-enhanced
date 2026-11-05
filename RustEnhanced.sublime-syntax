@@ -37,6 +37,7 @@ contexts:
     # This isn't really just "statements", it also includes all types,
     # expressions, items, etc.
     - include: wss
+    - include: wss🛑
 
     - include: visibility
 
@@ -1638,3 +1639,7 @@ contexts:
   wss:
     - match               : '{{wsp}}'
       #scope               : dbg✗w␠s
+  wss🛑:
+    - match               : '\s'
+      scope: invalid.illegal.rust
+      #scope               : dbg✗w␠s🛑
