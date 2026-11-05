@@ -44,14 +44,14 @@ contexts:
     - match: ';'
       scope: punctuation.terminator.rust
 
-    - match: '(''(?:{{non_raw_ident}}))\s*(:)'
+    - match: '(''(?:{{non_raw_ident}})){{wsp}}*(:)'
       captures:
         1: entity.name.label.rust
         2: punctuation.separator.rust
 
     - include: lifetime
 
-    - match: '\b(mod)\s+({{identifier}})\b'
+    - match: '\b(mod){{wsp}}+({{identifier}})\b'
       captures:
         1: storage.type.module.rust
         2: entity.name.module.rust
@@ -62,13 +62,13 @@ contexts:
           pop: true
         - include: statements-block
 
-    - match: '\b({{identifier}})\s*(=)\s*(?=\|)'
+    - match: '\b({{identifier}}){{wsp}}*(=){{wsp}}*(?=\|)'
       captures:
         1: entity.name.function.rust
         2: keyword.operator.assignment.rust
       push: closure
 
-    - match: '\b(fn)\s+(?={{identifier}})'
+    - match: '\b(fn){{wsp}}+(?={{identifier}})'
       captures:
         1: storage.type.function.rust
       push: fn-definition
@@ -81,7 +81,7 @@ contexts:
       scope: storage.type.union.rust
       push: union-identifier
 
-    - match: '\b(type)\s+({{identifier}})\b'
+    - match: '\b(type){{wsp}}+({{identifier}})\b'
       captures:
         1: storage.type.type.rust
         2: entity.name.type.rust
@@ -92,7 +92,7 @@ contexts:
       - match: '(?=\S)'
         pop: true
 
-    - match: '\b(trait)\s+({{identifier}})\b'
+    - match: '\b(trait){{wsp}}+({{identifier}})\b'
       captures:
         1: storage.type.trait.rust
         2: entity.name.trait.rust
@@ -117,22 +117,22 @@ contexts:
     - include: raw-pointer
 
     # `const` in a function header has a different scope from `const` values.
-    - match: '\b(const)\s+(?=unsafe|extern|fn)'
+    - match: '\b(const){{wsp}}+(?=unsafe|extern|fn)'
       captures:
         1: storage.modifier.rust
 
-    - match: '\b(const)\s+({{identifier}})'
+    - match: '\b(const){{wsp}}+({{identifier}})'
       captures:
         1: storage.type.rust
         2: entity.name.constant.rust
 
-    - match: '\b(static)\s+(?:(mut)\s+)?({{identifier}})'
+    - match: '\b(static){{wsp}}+(?:(mut){{wsp}}+)?({{identifier}})'
       captures:
         1: storage.type.rust
         2: storage.modifier.rust
         3: entity.name.constant.rust
 
-    - match: '\b(break|continue)\b(?:\s+(''{{non_raw_ident}}))?'
+    - match: '\b(break|continue)\b(?:{{wsp}}+(''{{non_raw_ident}}))?'
       captures:
         1: keyword.control.rust
         2: entity.name.label.rust
@@ -140,7 +140,7 @@ contexts:
     - include: support-type
     - include: type
 
-    - match: '\b(macro_rules!)\s+({{identifier}})\b'
+    - match: '\b(macro_rules!){{wsp}}+({{identifier}})\b'
       captures:
         1: support.function.rust
         2: entity.name.macro.rust
@@ -153,7 +153,7 @@ contexts:
 
     - include: macros
 
-    - match: '\b{{identifier}}!(?=\s*(\(|\{|\[))'
+    - match: '\b{{identifier}}!(?={{wsp}}*(\(|\{|\[))'
       scope: support.macro.rust
 
     - include: support-type
@@ -186,7 +186,7 @@ contexts:
       scope: punctuation.separator.rust
       push: after-operator
 
-    - match: '\b[[:lower:]_][[:lower:][:digit:]_]*\s*(?=\()'
+    - match: '\b[[:lower:]_][[:lower:][:digit:]_]*{{wsp}}*(?=\()'
       scope: variable.function.rust
 
     - match: '{{identifier}}'
@@ -195,7 +195,7 @@ contexts:
       scope: punctuation.accessor.dot.rust
 
   visibility:
-    - match: '\b(pub)\s*(\()'
+    - match: '\b(pub){{wsp}}*(\()'
       captures:
         1: storage.modifier.rust
         2: punctuation.section.group.begin.rust
@@ -214,7 +214,7 @@ contexts:
       scope: storage.modifier.rust
 
   attribute:
-    - match: '(#)\s*(!?)\s*(\[)'
+    - match: '(#){{wsp}}*(!?){{wsp}}*(\[)'
       captures:
         1: punctuation.definition.annotation.rust
         2: punctuation.definition.annotation.rust
@@ -222,7 +222,7 @@ contexts:
       push:
         # https://github.com/sublimehq/Packages/issues/709#issuecomment-266835130
         - meta_scope: meta.annotation.rust
-        - match: '(?:{{identifier}}\s*::\s*)*({{identifier}})'
+        - match: '(?:{{identifier}}{{wsp}}*::{{wsp}}*)*({{identifier}})'
           scope: meta.path.rust
           captures:
             1: variable.annotation.rust
@@ -255,7 +255,7 @@ contexts:
     - match: \)
       scope: meta.function-call.rust meta.group.rust punctuation.section.group.end.rust
       pop: true
-    - match: '({{identifier}})\s*(\()'
+    - match: '({{identifier}}){{wsp}}*(\()'
       scope: meta.function-call.rust
       captures:
         1: variable.function.rust
@@ -319,14 +319,14 @@ contexts:
     - include: try-closure
 
   try-closure:
-    - match: '\s*(?=\|)'
+    - match: '{{wsp}}*(?=\|)'
       set: closure
     # Exit the context if we didn't find a closure
     - match: '(?=\S)'
       pop: true
 
   support-type:
-    - match: '(Vec|Option|Result|BTreeMap|HashMap|Box|Rc|Arc|AsRef|AsMut|Into|From)\s*(?=<)'
+    - match: '(Vec|Option|Result|BTreeMap|HashMap|Box|Rc|Arc|AsRef|AsMut|Into|From){{wsp}}*(?=<)'
       scope: support.type.rust
       push: generic-angles
     - match: '[?]?(?=\bSized\b)'
@@ -341,7 +341,7 @@ contexts:
       scope: punctuation.separator.rust
       push:
         - meta_scope: meta.function.return-type.rust
-        - match: '(?=\s*\{|\bwhere\b)'
+        - match: '(?={{wsp}}*\{|\bwhere\b)'
           pop: true
         - match: '(?=<)'
           push: generic-angles
@@ -361,7 +361,7 @@ contexts:
     - match: '@'
       scope: keyword.operator.rust
     - include: lifetime
-    - match: '\b{{identifier}}\b(?!\s*(?:::|\{|\[|\())'
+    - match: '\b{{identifier}}\b(?!{{wsp}}*(?:::|\{|\[|\())'
       scope: variable.parameter.rust
 
     - match: '\{'
@@ -372,12 +372,12 @@ contexts:
         - match: '\}'
           scope: punctuation.section.block.end.rust
           pop: true
-        - match: '(\d+)\s*(:)'
+        - match: '(\d+){{wsp}}*(:)'
           # Tuple struct field specifier.
           captures:
             1: constant.numeric.integer.decimal.rust
             2: punctuation.separator.rust
-        - match: '{{identifier}}\s*(:)'
+        - match: '{{identifier}}{{wsp}}*(:)'
           # Struct field specifier.
           captures:
             1: punctuation.separator.rust
@@ -482,7 +482,7 @@ contexts:
           __m(?:64|128|256)[di]? # __m512 should come later
         )\b
       scope: storage.type.rust
-    - match: '\bdyn\b(?!\s*::)(?=\s*(?:\(|{{lifetime}}|{{identifier}}))'
+    - match: '\bdyn\b(?!{{wsp}}*::)(?={{wsp}}*(?:\(|{{lifetime}}|{{identifier}}))'
       scope: storage.type.trait.rust
 
   generic-angles:
@@ -581,7 +581,7 @@ contexts:
     - match: '\bas\b'
       # This is for qualified type paths <Type as TypePath>
       scope: keyword.operator.rust
-    - match: \b(fn)\b\s*(\()
+    - match: \b(fn)\b{{wsp}}*(\()
       captures:
         1: storage.type.function.rust
         2: meta.group.rust punctuation.section.group.begin.rust
@@ -637,7 +637,7 @@ contexts:
     - match: '{{identifier}}'
 
   raw-pointer:
-    - match: '\*\s*(?:const|mut)\b'
+    - match: '\*{{wsp}}*(?:const|mut)\b'
       scope: storage.modifier.rust
 
   hrtb:
@@ -736,7 +736,7 @@ contexts:
     - include: comments
     - include: attribute
     - include: visibility
-    - match: '{{identifier}}(?=\s*:)'
+    - match: '{{identifier}}(?={{wsp}}*:)'
       scope: variable.other.member.rust
       push:
         - match: ','
@@ -947,20 +947,20 @@ contexts:
           pop: true
         - include: macro-matchers
 
-    - match: '(\$\s*{{identifier}})\s*(:)\s*(ident|path|expr|ty|pat_param|pat|stmt|block|item|meta|tt|lifetime|vis|literal)'
+    - match: '(\${{wsp}}*{{identifier}}){{wsp}}*(:){{wsp}}*(ident|path|expr|ty|pat_param|pat|stmt|block|item|meta|tt|lifetime|vis|literal)'
       captures:
         1: variable.parameter.rust
         2: punctuation.separator.rust
         3: storage.type.rust
 
-    - match: '(\$)\s*(\()'
+    - match: '(\$){{wsp}}*(\()'
       # Kleene operator.
       captures:
         1: keyword.operator.rust
         2: punctuation.section.group.begin.rust
       push:
         - meta_include_prototype: false
-        - match: '(\))\s*[^?*+]*\s*([?*+])'
+        - match: '(\)){{wsp}}*[^?*+]*{{wsp}}*([?*+])'
           captures:
             1: punctuation.section.group.end.rust
             2: keyword.operator.rust
@@ -1046,11 +1046,11 @@ contexts:
 
   impl-for:
     # `!?` here matches opt-out trait impls
-    - match: '(?=\s*(?:::|!?{{identifier}}|\$|<)+(<.*?>)?\s+for\s+)'
+    - match: '(?={{wsp}}*(?:::|!?{{identifier}}|\$|<)+(<.*?>)?{{wsp}}+for{{wsp}}+)'
       set:
         - meta_scope: meta.impl.rust
         - include: comments
-        - match: '!?(?=\s*{{identifier}})'
+        - match: '!?(?={{wsp}}*{{identifier}})'
           scope: keyword.operator.rust meta.impl.opt-out.rust
         - match: \bfor\b
           scope: keyword.other.rust
@@ -1200,7 +1200,7 @@ contexts:
           scope: punctuation.definition.comment.rust
           pop: true
         # Javadoc style comment with leading * on each line. Helps with word-wrapping.
-        - match: ^\s*(\*)(?!/)
+        - match: ^{{wsp}}*(\*)(?!/)
           captures:
             1: punctuation.definition.comment.rust
         - include: block-comments
@@ -1231,7 +1231,7 @@ contexts:
 
   macros-fmt-only:
     # macros which take format specs as the only parameter
-    - match: '\b((?:format(?:_args)?|e?print(?:ln)?|panic|unreachable|unimplemented){{wsp}}*!)\s*(\()'
+    - match: '\b((?:format(?:_args)?|e?print(?:ln)?|panic|unreachable|unimplemented){{wsp}}*!){{wsp}}*(\()'
       captures:
         1: support.macro.rust
         2: meta.group.rust punctuation.section.group.begin.rust
@@ -1245,7 +1245,7 @@ contexts:
 
   macros-fmt-second:
     # macros which take format specs as the second parameter
-    - match: '\b((?:write(?:ln)?|(?:debug_)?assert){{wsp}}*!)\s*(\()'
+    - match: '\b((?:write(?:ln)?|(?:debug_)?assert){{wsp}}*!){{wsp}}*(\()'
       captures:
         1: support.macro.rust
         2: meta.group.rust punctuation.section.group.begin.rust
@@ -1262,9 +1262,9 @@ contexts:
         - include: group-tail
 
     # macros which take format specs as the third parameter
-    # - match: '\b((?:assert_eq|assert_ne|debug_assert_eq|debug_assert_ne)!)\s*(\()'
+    # - match: '\b((?:assert_eq|assert_ne|debug_assert_eq|debug_assert_ne)!){{wsp}}*(\()'
     # is more performant as the below
-    # - match: '\b((?:debug_)?assert_(?:eq|ne)!)\s*(\()'
+    # - match: '\b((?:debug_)?assert_(?:eq|ne)!){{wsp}}*(\()'
 
   byte:
     - match: "(b)(')"
