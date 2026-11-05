@@ -421,7 +421,7 @@ pub fn macro_whitespace_tests() {
 //            ^^^^^^^^^^^^ string.quoted.double
 //                     ^^ constant.other.placeholder
     println
-//  ^^^^^^^ - support.macro
+//  ^^^^^^^ support.macro
     !("Example {}", 1);
 //  ^ support.macro
 //   ^ punctuation.section.group.begin
@@ -439,13 +439,18 @@ pub fn macro_whitespace_tests() {
 //             ^^^^^^^^^^^^ string.quoted.double
 //                      ^^ constant.other.placeholder
     write
+//  ^^^^^ support.macro
     !(f, "Example {}", 1);
 //  ^ support.macro
 //       ^^^^^^^^^^^^ string.quoted.double
 //                ^^ constant.other.placeholder
     print
+//  ^^^^^ - support.macro
     != 1;
 //  ^^ keyword.operator
+    print
+//  ^^^^^ - support.macro
+    + 1;
     if !(a) {}
 //     ^ keyword.operator
 }
