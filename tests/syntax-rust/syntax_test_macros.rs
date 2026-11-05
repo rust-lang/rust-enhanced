@@ -412,3 +412,45 @@ macro_rules! designators {
 //                                                                    ^^ meta.macro meta.macro.transcribers
 }
 //<- meta.macro punctuation.section.block.end
+
+pub fn macro_whitespace_tests() {
+    println !("Example {}", 1);
+//  ^^^^^^^ support.macro
+//          ^ support.macro
+//           ^ punctuation.section.group.begin
+//            ^^^^^^^^^^^^ string.quoted.double
+//                     ^^ constant.other.placeholder
+    println
+//  ^^^^^^^ support.macro
+    !("Example {}", 1);
+//  ^ support.macro
+//   ^ punctuation.section.group.begin
+//    ^^^^^^^^^^^^ string.quoted.double
+//             ^^ constant.other.placeholder
+    println!
+//  ^^^^^^^^ support.macro
+    ("Example {}", 1);
+//  ^ punctuation.section.group.begin
+//   ^^^^^^^^^^^^ string.quoted.double
+//            ^^ constant.other.placeholder
+    write !(f, "Example {}", 1);
+//  ^^^^^ support.macro
+//        ^ support.macro
+//             ^^^^^^^^^^^^ string.quoted.double
+//                      ^^ constant.other.placeholder
+    write
+//  ^^^^^ support.macro
+    !(f, "Example {}", 1);
+//  ^ support.macro
+//       ^^^^^^^^^^^^ string.quoted.double
+//                ^^ constant.other.placeholder
+    print
+//  ^^^^^ - support.macro
+    != 1;
+//  ^^ keyword.operator
+    print
+//  ^^^^^ - support.macro
+    + 1;
+    if !(a) {}
+//     ^ keyword.operator
+}

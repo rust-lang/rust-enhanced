@@ -17,6 +17,8 @@ variables:
   float_suffixes: 'f(32|64)'
   dec_literal: '[0-9](?:[0-9_])*'
   float_exponent: '[eE][+-]?[0-9_]*[0-9][0-9_]*'
+  format_macros: '(?:format(?:_args)?|e?print(?:ln)?|panic|unreachable|unimplemented)'
+  format2_macros: '(?:write(?:ln)?|(?:debug_)?assert)'
 contexts:
   main:
     - include: statements
@@ -146,34 +148,42 @@ contexts:
     - include: chars
 
     # macros which take format specs as the only parameter
-    - match: '\b((?:format(?:_args)?|e?print(?:ln)?|panic|unreachable|unimplemented)!)\s*(\()'
+    - match: '\b({{format_macros}})\s*(!)\s*(\()'
       captures:
         1: support.macro.rust
-        2: meta.group.rust punctuation.section.group.begin.rust
-      push:
-        - meta_content_scope: meta.group.rust
-        - include: comments
-        - include: format-string
-        - include: format-raw-string
-        - match: '(?=\S)'
-          set: group-tail
+        2: support.macro.rust
+        3: meta.group.rust punctuation.section.group.begin.rust
+      push: format-macro-args
+    # Syntax rules only see one line at a time, so the rest of the invocation
+    # has to be picked up by a follow-up context.
+    - match: '(?=\b{{format_macros}}\b\s*$)'
+      branch_point: format-macro-newline
+      branch:
+        - format-macro-name
+        - format-macro-not-name
+    - match: '\b({{format_macros}})\s*(!)(?=\s*$)'
+      captures:
+        1: support.macro.rust
+        2: support.macro.rust
+      push: format-macro-paren
 
     # macros which take format specs as the second parameter
-    - match: '\b((?:write(?:ln)?|(?:debug_)?assert)!)\s*(\()'
+    - match: '\b({{format2_macros}})\s*(!)\s*(\()'
       captures:
         1: support.macro.rust
-        2: meta.group.rust punctuation.section.group.begin.rust
-      push:
-        - meta_scope: meta.group.rust
-        - include: comments
-        - match: ','
-          set:
-            - meta_content_scope: meta.group.rust
-            - include: format-string
-            - include: format-raw-string
-            - match: '(?=\S)'
-              set: group-tail
-        - include: group-tail
+        2: support.macro.rust
+        3: meta.group.rust punctuation.section.group.begin.rust
+      push: format2-macro-args
+    - match: '(?=\b{{format2_macros}}\b\s*$)'
+      branch_point: format2-macro-newline
+      branch:
+        - format2-macro-name
+        - format2-macro-not-name
+    - match: '\b({{format2_macros}})\s*(!)(?=\s*$)'
+      captures:
+        1: support.macro.rust
+        2: support.macro.rust
+      push: format2-macro-paren
 
     # macros which take format specs as the third parameter
     # - match: '\b((?:assert_eq|assert_ne|debug_assert_eq|debug_assert_ne)!)\s*(\()'
@@ -875,6 +885,76 @@ contexts:
       pop: true
     # This is just constant-expression, but we don't have that defined.
     - include: statements
+
+  format-macro-name:
+    - match: '{{format_macros}}'
+      scope: support.macro.rust
+      set: format-macro-bang
+
+  format-macro-not-name:
+    - match: '{{format_macros}}'
+      pop: true
+
+  format-macro-bang:
+    - include: comments
+    - match: '!(?!=)'
+      scope: support.macro.rust
+      set: format-macro-paren
+    - match: '(?=\S)'
+      fail: format-macro-newline
+
+  format-macro-paren:
+    - include: comments
+    - match: '\('
+      scope: meta.group.rust punctuation.section.group.begin.rust
+      set: format-macro-args
+    - match: '(?=\S)'
+      pop: true
+
+  format-macro-args:
+    - meta_content_scope: meta.group.rust
+    - include: comments
+    - include: format-string
+    - include: format-raw-string
+    - match: '(?=\S)'
+      set: group-tail
+
+  format2-macro-name:
+    - match: '{{format2_macros}}'
+      scope: support.macro.rust
+      set: format2-macro-bang
+
+  format2-macro-not-name:
+    - match: '{{format2_macros}}'
+      pop: true
+
+  format2-macro-bang:
+    - include: comments
+    - match: '!(?!=)'
+      scope: support.macro.rust
+      set: format2-macro-paren
+    - match: '(?=\S)'
+      fail: format2-macro-newline
+
+  format2-macro-paren:
+    - include: comments
+    - match: '\('
+      scope: meta.group.rust punctuation.section.group.begin.rust
+      set: format2-macro-args
+    - match: '(?=\S)'
+      pop: true
+
+  format2-macro-args:
+    - meta_scope: meta.group.rust
+    - include: comments
+    - match: ','
+      set:
+        - meta_content_scope: meta.group.rust
+        - include: format-string
+        - include: format-raw-string
+        - match: '(?=\S)'
+          set: group-tail
+    - include: group-tail
 
   macro-block:
     - meta_scope: meta.macro.rust
