@@ -1231,7 +1231,7 @@ contexts:
 
   macros-fmt-only:
     # macros which take format specs as the only parameter
-    - match: '\b((?:format(?:_args)?|e?print(?:ln)?|panic|unreachable|unimplemented)!)\s*(\()'
+    - match: '\b((?:format(?:_args)?|e?print(?:ln)?|panic|unreachable|unimplemented){{wsp}}*!)\s*(\()'
       captures:
         1: support.macro.rust
         2: meta.group.rust punctuation.section.group.begin.rust
@@ -1245,7 +1245,7 @@ contexts:
 
   macros-fmt-second:
     # macros which take format specs as the second parameter
-    - match: '\b((?:write(?:ln)?|(?:debug_)?assert)!)\s*(\()'
+    - match: '\b((?:write(?:ln)?|(?:debug_)?assert){{wsp}}*!)\s*(\()'
       captures:
         1: support.macro.rust
         2: meta.group.rust punctuation.section.group.begin.rust
