@@ -20,6 +20,12 @@ mod bar;
 //^^^^^^ meta.module
 //  ^^^ entity.name.module
 //     ^ punctuation.terminator
+mod bar;
+// ^    - invalid.illegal.rust
+//^^^^^   meta.module.rust
+mod bar;
+// ^      invalid.illegal.rust
+//^^^^^ - meta.module.rust
 
 pub mod my_mod {
 //  ^^^^^^^^^^^^ meta.module
