@@ -13,6 +13,20 @@ String my_var = format!("Hello {0}", "World");
 pub fn macro_tests() {
     println!();
 //  ^^^^^^^^ support.macro
+    println	!("\t⭾␉");
+//  ^^^^^^^^^ support.macro
+    println
+//         _ support.macro  TBD: newlines break the way rules work
+    !("\n ␊");
+    println ‎‏!("\\v⭿␋ \\f␌  NEL  ␠  ↱LRM  ↰RLM"); //\r ␍ not supported in Sublime Text (mixed newlines)
+//  ^^^^^^^^^^^^^^ support.macro
+    print !("§Sep");
+//  ^^^^^^^ support.macro
+    panic !("━Sep");
+//  ^^^^^^^ support.macro
+    println !("✓ broken over space em quad, not a Rust whitespace char"); //
+//         ^  - support.macro
+//         ^    invalid.illegal.rust
     println!("Example");
 //  ^^^^^^^^ support.macro
 //          ^ punctuation.section.group.begin
